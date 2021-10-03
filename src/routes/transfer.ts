@@ -29,6 +29,7 @@ router.post("/", async (req, res) => {
     if (sender.balance < amount) {
       return res.status(400).json({ error: "insuffient balance" });
     }
+    await senderRef.update({ status: "IN_TRANS" });
     const transactionRef = database().ref("transactions");
     const transaction = {
       senderId,
@@ -42,10 +43,11 @@ router.post("/", async (req, res) => {
     };
     const dbRefUrl = await transactionRef.push(transaction);
     await senderRef.update({
-      balance: transaction.senderAfterTransfer,
+      balance: database.ServerValue.increment(-amount),
+      status: "ACTIVE",
     });
     await recipientRef.update({
-      balance: transaction.recipientAfterTransfer,
+      balance: database.ServerValue.increment(amount),
     });
     res.json({ transactionId: String(dbRefUrl).split("/").pop() });
   } catch (e) {
