@@ -140,7 +140,7 @@
           <tbody>
             <tr v-for="r in recieved" :key="r.ref">
               <td>{{r.senderId}}</td>
-              <td>{{value(r.amount)}}</td>
+              <td>{{price(r.amount)}}</td>
               <td>{{locale(r.createdAt)}}</td>
             </tr>
           </tbody>
@@ -238,7 +238,7 @@
               timeZone: 'Asia/Yangon'
             });
           },
-          value(amount) {
+          price(amount) {
             return parseInt(amount).toLocaleString();
           }
         }

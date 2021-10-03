@@ -6,7 +6,7 @@ const router = Router();
 router.post("/", async (req, res) => {
   const senderId = req["uid"];
   const { recipientId, amount } = req.body;
-  if (!recipientId || !amount) {
+  if (!recipientId || !amount || typeof amount !== "number" || amount < 0) {
     return res.status(400).json({ error: "Bad request" });
   }
   try {
@@ -14,6 +14,9 @@ router.post("/", async (req, res) => {
     const recipientRef = database().ref("accounts").child(recipientId);
     const sender: any = (await senderRef.get()).toJSON();
     const recipient: any = (await recipientRef.get()).toJSON();
+    if (!sender || !recipient) {
+      return res.status(403).json({ error: "invalid account" });
+    }
     if (sender.status !== "ACTIVE" || recipient.status !== "ACTIVE") {
       return res.status(403).json({ error: "inactive account" });
     }
