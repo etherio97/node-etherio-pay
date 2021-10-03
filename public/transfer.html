@@ -74,7 +74,7 @@
 <body>
   <main class="form-signin text-center">
     <div class="form-floating">
-      <input class="form-control" id="floatingInput" v-model="recipient" @change="getAccount">
+      <input class="form-control" id="floatingInput" type="tel" v-model="recipient" @change="getAccount">
       <label for="floatingInput">Recipient</label>
     </div>
     <div class="form-floating" v-if="accounts.length">
@@ -85,7 +85,7 @@
       <label for="floatingInput">Account</label>
     </div>
     <div class="form-floating mt-2 mb-2">
-      <input class="form-control" id="floatingInput" v-model="amount">
+      <input class="form-control" id="floatingInput" v-model="amount" type="number">
       <label for="floatingInput">Amount</label>
     </div>
     <button class="w-100 btn btn-lg btn-primary my-1" @click="transfer">Transfer</button>
