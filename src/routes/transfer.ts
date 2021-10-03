@@ -6,7 +6,13 @@ const router = Router();
 router.post("/", async (req, res) => {
   const senderId = req["uid"];
   const { recipientId, amount } = req.body;
-  if (!recipientId || !amount || typeof amount !== "number" || amount < 0) {
+  if (
+    !recipientId ||
+    senderId == recipientId ||
+    !amount ||
+    typeof amount !== "number" ||
+    amount < 0
+  ) {
     return res.status(400).json({ error: "Bad request" });
   }
   try {
@@ -15,13 +21,13 @@ router.post("/", async (req, res) => {
     const sender: any = (await senderRef.get()).toJSON();
     const recipient: any = (await recipientRef.get()).toJSON();
     if (!sender || !recipient) {
-      return res.status(403).json({ error: "invalid account" });
+      return res.status(400).json({ error: "invalid account" });
     }
     if (sender.status !== "ACTIVE" || recipient.status !== "ACTIVE") {
-      return res.status(403).json({ error: "inactive account" });
+      return res.status(400).json({ error: "inactive account" });
     }
     if (sender.balance < amount) {
-      return res.status(403).json({ error: "insuffient balance" });
+      return res.status(400).json({ error: "insuffient balance" });
     }
     const transactionRef = database().ref("transactions");
     const transaction = {
@@ -34,14 +40,14 @@ router.post("/", async (req, res) => {
       recipientAfterTransfer: recipient.balance + amount,
       createdAt: Date.now(),
     };
-    await transactionRef.push(transaction);
+    const dbRefUrl = await transactionRef.push(transaction);
     await senderRef.update({
       balance: transaction.senderAfterTransfer,
     });
     await recipientRef.update({
       balance: transaction.recipientAfterTransfer,
     });
-    res.json({ message: "success" });
+    res.json({ transactionId: String(dbRefUrl).split("/").pop() });
   } catch (e) {
     console.error(e);
     res.status(500).json({ error: e.message });

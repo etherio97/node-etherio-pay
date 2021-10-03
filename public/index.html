@@ -73,82 +73,66 @@
 
 <body>
   <main class="form-signin text-center">
-    <form v-if="loggedIn" @submit.prevent>
-      <div class="form-floating">
-        <input class="form-control" id="floatingInput" :value="user.email" readonly>
-        <label for="floatingInput">Email address</label>
-      </div>
-      <div class="form-floating mt-2 mb-2">
-        <input class="form-control" id="floatingInput" :value="token" readonly>
-        <label for="floatingInput">Token</label>
-      </div>
-      <div class="form-floating mt-2 mb-2" v-if="account">
-        <input class="form-control" id="floatingInput" :value="account.balance" readonly>
-        <label for="floatingInput">Balance</label>
-      </div>
-      <button class="w-100 btn btn-lg btn-primary" @click="signOut">Sign Out</button>
-    </form>
-
-    <form @submit.prevent="signInWithEmailAndPassword" v-else>
-      <img class="mb-4" src="https://realgate.weebly.com/uploads/2/1/9/5/21955322/editor/transparent-logo_5.png" alt=""
-        width="72">
-      <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
-      <div class="form-floating">
-        <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com" v-model="email"
-          required>
-        <label for="floatingInput">Email address</label>
-      </div>
-      <div class="form-floating">
-        <input type="password" class="form-control" id="floatingPassword" placeholder="Password" v-model="password"
-          required>
-        <label for="floatingPassword">Password</label>
-      </div>
-      <button class="w-100 btn btn-lg btn-primary " type="submit">Sign in</button>
-      <p class="mt-5 mb-3 text-muted">&copy; 2017–2021</p>
-    </form>
-
-    <div v-if="loggedIn">
-      <div class="table-responsive" v-if="transfered.length">
-        <h6>Transfer</h6>
-        <table class="table table-hover">
-          <thead>
-            <tr>
-              <th>To</th>
-              <th>Amount</th>
-              <th>Created At</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="t in transfered" :key="t.ref">
-              <td>{{t.recipientId}}</td>
-              <td>{{t.amount}}</td>
-              <td>{{locale(t.createdAt)}}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="table-responsive" v-if="recieved.length">
-        <h6>Recieved</h6>
-        <table class="table table-hover">
-          <thead>
-            <tr>
-              <th>From</th>
-              <th>Amount</th>
-              <th>Created At</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="r in recieved" :key="r.ref">
-              <td>{{r.senderId}}</td>
-              <td>{{price(r.amount)}}</td>
-              <td>{{locale(r.createdAt)}}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+    <div class="form-floating">
+      <input class="form-control" id="floatingInput" :value="user.email || user.phoneNumber" readonly>
+      <label for="floatingInput">Identifier</label>
+    </div>
+    <div class="form-floating mt-2 mb-2">
+      <input class="form-control" id="floatingInput" :value="token" readonly>
+      <label for="floatingInput">Token</label>
+    </div>
+    <div class="form-floating mt-2 mb-2" v-if="account">
+      <input class="form-control" id="floatingInput" :value="account.balance" readonly>
+      <label for="floatingInput">Balance</label>
+    </div>
+    <div v-if="!('balance' in account)">
+      <button class="btn btn-block my-2 btn-warning" @click="createAccount">
+        Start using Etherio Pay
+      </button>
+    </div>
+    <a class="w-100 btn btn-lg btn-primary my-1" href="transfer.html">Transfer</a>
+    <button class="w-100 btn btn-lg btn-primary my-1" @click="signOut">Sign Out</button>
+    <div class="table-responsive" v-if="transfered.length">
+      <h6>Transfer</h6>
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>To</th>
+            <th>Amount</th>
+            <th>Created At</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="t in transfered" :key="t.ref">
+            <td>{{t.recipientId}}</td>
+            <td>{{t.amount}}</td>
+            <td>{{locale(t.createdAt)}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="table-responsive" v-if="recieved.length">
+      <h6>Recieved</h6>
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>From</th>
+            <th>Amount</th>
+            <th>Created At</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="r in recieved" :key="r.ref">
+            <td>{{r.senderId}}</td>
+            <td>{{price(r.amount)}}</td>
+            <td>{{locale(r.createdAt)}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
     </div>
   </main>
-
+  <div id="recaptcha"></div>
   <script>
     window.addEventListener('load', function () {
       firebase.initializeApp({
@@ -162,34 +146,14 @@
         measurementId: "G-SQ08BEE4GJ"
       });
 
-      const app = new Vue({
+      new Vue({
         data: {
           user: null,
           loggedIn: false,
-          loaded: false,
-          email: '',
-          password: '',
           token: null,
           account: null,
           transfered: [],
           recieved: [],
-        },
-        beforeMount() {
-          firebase.auth().onAuthStateChanged((user) => {
-            if (user) {
-              this.loggedIn = true;
-              this.user = user;
-              user.getIdToken().then((token) => {
-                this.token = token;
-                this.getAccount();
-                this.getTransferedLogs();
-                this.getRecievedLogs();
-              })
-            } else {
-              this.user = null;
-              this.loggedIn = false;
-            }
-          });
         },
         methods: {
           getTransferedLogs() {
@@ -222,13 +186,12 @@
                 this.account = data;
               })
           },
-          signInWithEmailAndPassword() {
-            firebase.auth()
-              .signInWithEmailAndPassword(this.email, this.password)
-              .then((user) => {
-                this.user = user;
-                this.loggedIn = true;
-              })
+          createAccount() {
+            const headers = {
+              authorization: `Bearer ${this.token}`
+            };
+            fetch('/account', { method: 'POST', headers })
+              .then(() => this.getAccount());
           },
           signOut() {
             firebase.auth().signOut();
@@ -240,8 +203,24 @@
           },
           price(amount) {
             return parseInt(amount).toLocaleString();
-          }
-        }
+          },
+        },
+        beforeMount() {
+          firebase.auth().onAuthStateChanged((user) => {
+            if (user) {
+              this.loggedIn = true;
+              this.user = user;
+              user.getIdToken().then((token) => {
+                this.token = token;
+                this.getAccount();
+                this.getTransferedLogs();
+                this.getRecievedLogs();
+              })
+            } else {
+              window.location.href = 'phone-auth.html';
+            }
+          });
+        },
       }).$mount('main');
     });
   </script>
