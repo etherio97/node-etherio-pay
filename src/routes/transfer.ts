@@ -3,7 +3,7 @@ import { database } from "firebase-admin";
 
 const router = Router();
 
-router.post("/transfer", async (req, res) => {
+router.post("/", async (req, res) => {
   const senderId = req["uid"];
   const { recipientId, amount } = req.body;
   if (!recipientId || !amount) {
