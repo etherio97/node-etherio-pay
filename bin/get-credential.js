@@ -3,9 +3,6 @@ const { join, basename } = require("path");
 const { writeFileSync, existsSync } = require("fs");
 
 const SERVICE_ACCOUNT_PATH = join(__dirname, "../serviceAccount.json");
-
-require("dotenv").config();
-
 const FIREBASE_CREDENTIAL_URL = process.env.FIREBASE_CREDENTIAL_URL;
 
 if (!FIREBASE_CREDENTIAL_URL) throw "env: FIREBASE_CREDENTIAL_URL is undefined";
