@@ -139,7 +139,7 @@
             }
             const data = {
               recipientId: this.recipientId,
-              amount: this.amount,
+              amount: parseInt(this.amount),
             };
             fetch('/transfer', { method: "POST", headers, body: JSON.stringify(data) })
               .then(res => res.json())
