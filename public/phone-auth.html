@@ -165,7 +165,7 @@
               }
               let phoneNumber = this.email;
               if (phoneNumber.match(/^09/)) {
-                phoneNumber = `+95${recipientId.slice(1)}`;
+                phoneNumber = `+95${phoneNumber.slice(1)}`;
               }
               firebase
                 .auth()
