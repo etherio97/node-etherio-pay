@@ -10,7 +10,7 @@
       rel="stylesheet"
     />
     <script
-      src="https://cdn.jsdelivr.net/npm/vue@2.x.x/dist/vue.js"
+      src="https://cdn.jsdelivr.net/npm/vue@2.x.x/dist/vue.min.js"
       defer
     ></script>
     <script
@@ -98,8 +98,8 @@
       <div class="form-floating">
         <select class="form-control" id="floatingInput" v-model="recipientId">
           <option value="" disabled selected>- select an account -</option>
-          <option v-for="(a, i) in accounts" :key="i" :value="a">
-            {{ a }}
+          <option v-for="(account, i) in accounts" :key="i" :value="account">
+            {{ account }}
           </option>
         </select>
         <label for="floatingInput">Account</label>
@@ -116,7 +116,7 @@
       <button
         class="w-100 btn btn-lg btn-primary my-1"
         @click="transfer"
-        [disabled]="loading"
+        :disabled="loading"
       >
         Transfer
       </button>
