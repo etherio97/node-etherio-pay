@@ -1,153 +1,200 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Etherio Pay</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.x.x/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <script src="https://cdn.jsdelivr.net/npm/vue@2.x.x/dist/vue.js" defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/firebase@8.x.x/firebase-app.min.js" defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/firebase@8.x.x/firebase-auth.min.js" defer></script>
-  <style>
-    html,
-    body {
-      height: 100%;
-    }
-
-    body {
-      display: flex;
-      align-items: center;
-      padding-top: 40px;
-      padding-bottom: 40px;
-      background-color: #f5f5f5;
-    }
-
-    .form-signin {
-      width: 100%;
-      max-width: 550px;
-      padding: 15px;
-      margin: auto;
-    }
-
-    .form-signin .checkbox {
-      font-weight: 400;
-    }
-
-    .form-signin .form-floating:focus-within {
-      z-index: 2;
-    }
-
-    .form-signin input[type="email"] {
-      margin-bottom: -1px;
-      border-bottom-right-radius: 0;
-      border-bottom-left-radius: 0;
-    }
-
-    .form-signin input[type="password"] {
-      margin-bottom: 10px;
-      border-top-left-radius: 0;
-      border-top-right-radius: 0;
-    }
-
-    .bd-placeholder-img {
-      font-size: 1.125rem;
-      text-anchor: middle;
-      -webkit-user-select: none;
-      -moz-user-select: none;
-      user-select: none;
-    }
-
-    @media (min-width: 768px) {
-      .bd-placeholder-img-lg {
-        font-size: 3.5rem;
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Etherio Pay</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.x.x/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <script
+      src="https://cdn.jsdelivr.net/npm/vue@2.x.x/dist/vue.js"
+      defer
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/firebase@8.x.x/firebase-app.min.js"
+      defer
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/firebase@8.x.x/firebase-auth.min.js"
+      defer
+    ></script>
+    <style>
+      html,
+      body {
+        height: 100%;
       }
-    }
 
-    .hidden {
-      visibility: hidden;
-    }
-  </style>
-</head>
+      body {
+        display: flex;
+        align-items: center;
+        padding-top: 40px;
+        padding-bottom: 40px;
+        background-color: #f5f5f5;
+      }
 
-<body>
-  <main class="form-signin text-center">
-    <form @submit.prevent="signInWithPhoneNumber">
-      <img class="mb-4" src="https://realgate.weebly.com/uploads/2/1/9/5/21955322/editor/transparent-logo_5.png" alt=""
-        width="72">
-      <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
-      <div class="form-floating">
-        <input type="tel" class="form-control" id="floatingInput" placeholder="+959XXXXXXX" v-model="email" required>
-        <label for="floatingInput">PHONE NUMBER</label>
-      </div>
-      <div class="form-floating">
-        <input type="tel" class="form-control" id="floatingPassword" placeholder="OTP" v-model="password" maxlength="6"
-          minlength="6">
-        <label for="floatingPassword">OTP</label>
-      </div>
-      <button class="w-100 btn btn-lg btn-primary " type="submit" id="sign-in" v-show="!verificationId">
-        Get OTP
-      </button>
-      <button class="w-100 btn btn-lg btn-primary " type="submit" id="sign-in" v-show="!!verificationId">
-        Confirm
-      </button>
-    </form>
-  </main>
-  <div id="recaptcha"></div>
-  <script>
-    window.addEventListener('load', function () {
-      firebase.initializeApp({
-        apiKey: "AIzaSyBLnixFP-rLWHOOEvxC2pjF1ocCrH2qt1A",
-        authDomain: "etherio-pay.firebaseapp.com",
-        databaseURL: "https://etherio-pay-default-rtdb.firebaseio.com",
-        projectId: "etherio-pay",
-        storageBucket: "etherio-pay.appspot.com",
-        messagingSenderId: "927983401567",
-        appId: "1:927983401567:web:3323be6b7ee9a37a5fb9ea",
-        measurementId: "G-SQ08BEE4GJ"
-      });
+      .form-signin {
+        width: 100%;
+        max-width: 550px;
+        padding: 15px;
+        margin: auto;
+      }
 
-      new Vue({
-        data: {
-          email: '',
-          password: '',
-          recaptchaVerifier: null,
-          verificationId: null,
-        },
-        methods: {
-          signInWithPhoneNumber() {
-            if (this.password) {
-              let credential = firebase.auth
-                .PhoneAuthProvider
-                .credential(this.verificationId, this.password);
-              return firebase.auth().signInWithCredential(credential);
-            }
-            firebase.auth()
-              .signInWithPhoneNumber(this.email, window.recaptchaVerifier)
-              .then(({ verificationId }) => {
-                this.verificationId = verificationId;
-              });
+      .form-signin .checkbox {
+        font-weight: 400;
+      }
+
+      .form-signin .form-floating:focus-within {
+        z-index: 2;
+      }
+
+      .form-signin input[type="email"] {
+        margin-bottom: -1px;
+        border-bottom-right-radius: 0;
+        border-bottom-left-radius: 0;
+      }
+
+      .form-signin input[type="password"] {
+        margin-bottom: 10px;
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+      }
+
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+
+      .hidden {
+        visibility: hidden;
+      }
+    </style>
+  </head>
+
+  <body>
+    <main class="form-signin text-center">
+      <form @submit.prevent="signInWithPhoneNumber">
+        <img
+          class="mb-4"
+          src="https://realgate.weebly.com/uploads/2/1/9/5/21955322/editor/transparent-logo_5.png"
+          alt=""
+          width="72"
+        />
+        <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
+        <div class="form-floating">
+          <input
+            type="tel"
+            class="form-control"
+            id="floatingInput"
+            placeholder="+959XXXXXXX"
+            v-model="email"
+            required
+          />
+          <label for="floatingInput">PHONE NUMBER</label>
+        </div>
+        <div class="form-floating">
+          <input
+            type="tel"
+            class="form-control"
+            id="floatingPassword"
+            placeholder="OTP"
+            v-model="password"
+            maxlength="6"
+            minlength="6"
+          />
+          <label for="floatingPassword">OTP</label>
+        </div>
+        <button
+          class="w-100 btn btn-lg btn-primary"
+          type="submit"
+          id="sign-in"
+          v-show="!verificationId"
+        >
+          Get OTP
+        </button>
+        <button
+          class="w-100 btn btn-lg btn-primary"
+          type="submit"
+          id="sign-in"
+          v-show="!!verificationId"
+        >
+          Confirm
+        </button>
+      </form>
+    </main>
+    <div id="recaptcha"></div>
+    <script>
+      window.addEventListener("load", function () {
+        firebase.initializeApp({
+          apiKey: "AIzaSyBLnixFP-rLWHOOEvxC2pjF1ocCrH2qt1A",
+          authDomain: "etherio-pay.firebaseapp.com",
+          databaseURL: "https://etherio-pay-default-rtdb.firebaseio.com",
+          projectId: "etherio-pay",
+          storageBucket: "etherio-pay.appspot.com",
+          messagingSenderId: "927983401567",
+          appId: "1:927983401567:web:3323be6b7ee9a37a5fb9ea",
+          measurementId: "G-SQ08BEE4GJ",
+        });
+
+        new Vue({
+          data: {
+            email: "",
+            password: "",
+            recaptchaVerifier: null,
+            verificationId: null,
           },
-          recaptcha() {
-            window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha', {
-              size: 'invisible',
+          methods: {
+            signInWithPhoneNumber() {
+              if (this.password) {
+                let credential = firebase.auth.PhoneAuthProvider.credential(
+                  this.verificationId,
+                  this.password
+                );
+                return firebase.auth().signInWithCredential(credential);
+              }
+              let phoneNumber = this.email;
+              if (phoneNumber.match(/^09/)) {
+                phoneNumber = `+95${recipientId.slice(1)}`;
+              }
+              firebase
+                .auth()
+                .signInWithPhoneNumber(phoneNumber, window.recaptchaVerifier)
+                .then(({ verificationId }) => {
+                  this.verificationId = verificationId;
+                });
+            },
+            recaptcha() {
+              window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier(
+                "recaptcha",
+                {
+                  size: "invisible",
+                }
+              );
+              window.recaptchaVerifier.render();
+            },
+          },
+          beforeMount() {
+            firebase.auth().onAuthStateChanged((user) => {
+              if (user) {
+                window.location.href = "index.html";
+              } else {
+                this.recaptcha();
+              }
             });
-            window.recaptchaVerifier.render();
-          }
-        },
-        beforeMount() {
-          firebase.auth().onAuthStateChanged((user) => {
-            if (user) {
-              window.location.href = 'index.html';
-            } else {
-              this.recaptcha();
-            }
-          });
-        },
-      }).$mount('main');
-    });
-  </script>
-</body>
-
+          },
+        }).$mount("main");
+      });
+    </script>
+  </body>
 </html>

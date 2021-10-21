@@ -1,5 +1,7 @@
 import { Router } from "express";
 import { database } from "firebase-admin";
+import moment from "moment-timezone";
+import queueToSendMessage from "../functions/queueToSendMessage";
 
 const router = Router();
 
@@ -49,7 +51,14 @@ router.post("/", async (req, res) => {
     await recipientRef.update({
       balance: database.ServerValue.increment(amount),
     });
-    res.json({ transactionId: String(dbRefUrl).split("/").pop() });
+    res.json({ transactionId: dbRefUrl.key });
+    const time = moment().tz("Asia/Rangoon").format("DD/MM/YYYY hh:mmA");
+    await queueToSendMessage(
+      recipient.identifier,
+      `You recieved ${amount.toLocaleString()} kyats from ${
+        sender.identifier
+      } at ${time}. -EtherioPay [Ref:${dbRefUrl.key}]`
+    );
   } catch (e) {
     console.error(e);
     res.status(500).json({ error: e.message });
