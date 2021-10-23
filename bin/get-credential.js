@@ -1,3 +1,7 @@
+#!/usr/bin/env node
+if (process.env.NODE_ENV !== "production") {
+  require("dotenv").config();
+}
 const { default: axios } = require("axios");
 const { join, basename } = require("path");
 const { writeFileSync, existsSync } = require("fs");
