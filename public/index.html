@@ -19,7 +19,7 @@
     body {
       display: flex;
       align-items: center;
-      padding-top: 40px;
+      padding-top:2px0px;
       padding-bottom: 40px;
       background-color: #f5f5f5;
     }
@@ -72,18 +72,18 @@
 </head>
 
 <body>
-  <main class="form-signin text-center">
+  <main class="form-signin text-center" v-if="!!account?.identifier">
     <div class="form-floating">
-      <input class="form-control" id="floatingInput" :value="user.email || user.phoneNumber" readonly>
+      <input class="form-control" id="floatingInput" style="letter-spacing: 2px;" :value="user.email || user.phoneNumber" readonly>
       <label for="floatingInput">Identifier</label>
     </div>
-    <div class="form-floating mt-2 mb-2">
+    <div class="form-floating mt-2 mb-2" hidden>
       <input class="form-control" id="floatingInput" :value="token" readonly>
       <label for="floatingInput">Token</label>
     </div>
     <div class="form-floating mt-2 mb-2" v-if="account">
-      <input class="form-control" id="floatingInput" :value="account.balance" readonly>
-      <label for="floatingInput">Balance</label>
+      <input class="form-control" style="letter-spacing: 2px;" id="floatingInput" :value="price(account.balance)" readonly>
+      <label for="floatingInput">Balance (Kyats)</label>
     </div>
     <div v-if="!('balance' in account)">
       <button class="btn btn-block my-2 btn-warning" @click="createAccount">

@@ -84,42 +84,44 @@
 
   <body>
     <main class="form-signin text-center">
-      <div class="alert alert-danger" v-if="error">{{ error }}</div>
-      <div class="form-floating">
-        <input
-          class="form-control"
-          id="floatingInput"
-          type="tel"
-          v-model="recipient"
-          @change="getAccount"
-        />
-        <label for="floatingInput">Recipient</label>
-      </div>
-      <div class="form-floating">
-        <select class="form-control" id="floatingInput" v-model="recipientId">
-          <option value="" disabled selected>- select an account -</option>
-          <option v-for="(account, i) in accounts" :key="i" :value="account">
-            {{ account }}
-          </option>
-        </select>
-        <label for="floatingInput">Account</label>
-      </div>
-      <div class="form-floating mt-2 mb-2">
-        <input
-          class="form-control"
-          id="floatingInput"
-          v-model="amount"
-          type="number"
-        />
-        <label for="floatingInput">Amount</label>
-      </div>
-      <button
-        class="w-100 btn btn-lg btn-primary my-1"
-        @click="transfer"
-        :disabled="loading"
-      >
-        Transfer
-      </button>
+      <form @submit.prevent>
+        <div class="alert alert-danger" v-if="error">{{ error }}</div>
+        <div class="form-floating">
+          <input
+            class="form-control"
+            id="floatingInput"
+            type="tel"
+            v-model="recipient"
+            @change="getAccount()"
+          />
+          <label for="floatingInput">Recipient</label>
+        </div>
+        <div class="form-floating">
+          <select class="form-control" id="floatingInput" v-model="recipientId">
+            <option value="" disabled selected>- select an account -</option>
+            <option v-for="(account, i) in accounts" :key="i" :value="account">
+              {{ account }}
+            </option>
+          </select>
+          <label for="floatingInput">Account</label>
+        </div>
+        <div class="form-floating mt-2 mb-2">
+          <input
+            class="form-control"
+            id="floatingInput"
+            v-model="amount"
+            type="tel"
+          />
+          <label for="floatingInput">Amount</label>
+        </div>
+        <button
+          class="w-100 btn btn-lg btn-primary my-1"
+          @click="transfer"
+          :disabled="loading"
+        >
+          Transfer
+        </button>
+      </form>
       <a class="w-100 btn btn-lg btn-primary my-1" href="index.html">
         Back to Home
       </a>
@@ -150,38 +152,40 @@
           },
           methods: {
             getAccount() {
-              if (this.recipient.length < 5) {
-                return;
+              let identifier = this.recipient;
+              if (identifier.match(/^09/)) {
+                identifier = `+95${identifier.slice(1)}`;
               }
               const headers = {
                 authorization: `Bearer ${this.token}`,
                 "content-type": "application/json",
               };
+              this.error = null;
               fetch("/account/identify", {
                 method: "POST",
                 headers,
-                body: JSON.stringify({
-                  identifier: this.recipient,
-                }),
+                body: JSON.stringify({ identifier }),
               })
                 .then((res) => res.json())
                 .then((data) => {
                   this.accounts = data;
+                  if (this.accounts.length) {
+                    this.recipientId = this.accounts[0];
+                  } else {
+                    this.error = `${identifier} don't have Etherio Pay Account.`;
+                  }
                 });
             },
             transfer() {
               if (this.loading) return;
               let recipientId = this.recipientId;
-              if (recipientId.match(/^09/)) {
-                recipientId = `+95${recipientId.slice(1)}`;
-              }
               const headers = {
                 authorization: `Bearer ${this.token}`,
                 "content-type": "application/json",
               };
               const data = {
                 recipientId,
-                amount: parseInt(this.amount),
+                amount: parseInt(this.amount) || 0,
               };
               this.error = null;
               this.loading = true;
