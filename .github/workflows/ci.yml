@@ -2,7 +2,7 @@ name: CI
 n:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   build:
