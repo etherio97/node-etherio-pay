@@ -16,9 +16,10 @@ router.post("/identify", async (req, res) => {
       .limitToLast(1);
     const data = await (await query.get()).toJSON();
     const accounts = Object.keys(data || {});
+
     res.json(accounts);
   } catch (e) {
-    console.error(e);
+    // console.error(e);
     res.status(500).json({ error: e.message });
   }
 });
@@ -34,7 +35,7 @@ router.get("/", async (req, res) => {
     }
     res.json(account);
   } catch (e) {
-    console.error(e);
+    // console.error(e);
     res.status(500).json({ error: e.message });
   }
 });
@@ -50,7 +51,7 @@ router.post("/", async (req, res) => {
     }
     const account = {
       uid,
-      identifier: auth["email"] || auth["phone_number"],
+      identifier: auth["phone_number"] || auth["email"],
       balance: 0,
       status: "ACTIVE",
       createdAt: Date.now(),
@@ -58,6 +59,7 @@ router.post("/", async (req, res) => {
     await accountRef.set(account);
     res.send(account);
   } catch (e) {
+    // console.error(e);
     res.json({ error: e.message });
   }
 });

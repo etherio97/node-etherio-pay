@@ -88,7 +88,7 @@ router.post("/", async (req, res) => {
       } at ${time}. -EtherioPay [Ref:${transactionSnap.key}]`
     );
   } catch (e) {
-    console.error(e);
+    // console.error(e);
     res.status(500).json({ error: e.message });
   }
 });
