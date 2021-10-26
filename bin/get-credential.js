@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 const { default: axios } = require("axios");
 const { join, basename } = require("path");
 const { writeFileSync, existsSync } = require("fs");
