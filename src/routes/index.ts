@@ -4,15 +4,21 @@ import account from "./account";
 import transfer from "./transfer";
 import redeem from "./redeem";
 import transaction from "./transaction";
+import giftCards from "./gift-cards";
 
 const router = Router();
 
-router.use("/account", guard, account);
+router.use(guard);
 
-router.use("/transfer", guard, transfer);
+// guarded routes
+router.use("/account", account);
 
-router.use("/transaction", guard, transaction);
+router.use("/transfer", transfer);
 
-router.use("/redeem", guard, redeem);
+router.use("/transaction", transaction);
+
+router.use("/redeem", redeem);
+
+router.use("/gift-cards", giftCards);
 
 export default router;
