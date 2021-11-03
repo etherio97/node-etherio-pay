@@ -4,15 +4,32 @@ import account from "./account";
 import transfer from "./transfer";
 import redeem from "./redeem";
 import transaction from "./transaction";
+import giftCards from "./gift-cards";
 
 const router = Router();
 
-router.use("/account", guard, account);
+router.use(guard);
 
-router.use("/transfer", guard, transfer);
+// router.use((req, res, next) => {
+//   req["uid"] = "TJFsHJ3Z0YXv4rvlK25yCKWYDTa3";
+//   req["auth"] = {
+//     uid: req["uid"],
+//     phone_number: "+959786790788",
+//     email: null,
+//     created_at: 1634813766848,
+//   };
+//   next();
+// });
 
-router.use("/transaction", guard, transaction);
+// guarded routes
+router.use("/account", account);
 
-router.use("/redeem", guard, redeem);
+router.use("/transfer", transfer);
+
+router.use("/transaction", transaction);
+
+router.use("/redeem", redeem);
+
+router.use("/gift-cards", giftCards);
 
 export default router;

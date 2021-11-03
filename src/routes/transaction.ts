@@ -10,17 +10,14 @@ router.get("/transfered", async (req, res) => {
       .ref("transactions")
       .orderByChild("senderId")
       .equalTo(uid);
-    const transactions: any = (await query.get()).toJSON();
-    res.json(
-      Object.entries(transactions || {}).map(
-        ([ref, value]: [string, object]) => ({
-          ref,
-          ...value,
-        })
-      )
-    );
+
+    const transactions: Array<any> = Object.entries(
+      (await query.get()).toJSON() || {}
+    ).map(([ref, value]: [string, object]) => ({ ref, ...value }));
+
+    res.json(transactions.reverse());
   } catch (e) {
-    console.error(e);
+    // console.error(e);
     res.status(500).json({ error: e.message });
   }
 });
@@ -32,17 +29,14 @@ router.get("/recieved", async (req, res) => {
       .ref("transactions")
       .orderByChild("recipientId")
       .equalTo(uid);
-    const transactions: any = (await query.get()).toJSON();
-    res.json(
-      Object.entries(transactions || {}).map(
-        ([ref, value]: [string, object]) => ({
-          ref,
-          ...value,
-        })
-      )
-    );
+
+    const transactions: Array<any> = Object.entries(
+      (await query.get()).toJSON() || {}
+    ).map(([ref, value]: [string, object]) => ({ ref, ...value }));
+
+    res.json(transactions.reverse());
   } catch (e) {
-    console.error(e);
+    // console.error(e);
     res.status(500).json({ error: e.message });
   }
 });
