@@ -31,7 +31,13 @@ router.get("/", async (req, res) => {
   try {
     const account = await (await accountRef.get()).toJSON();
     if (!account) {
-      return res.json({});
+      return res.json({
+        uid,
+        identifier: auth["phone_number"] || auth["email"],
+        balance: null,
+        status: "ACTIVE",
+        createdAt: auth["created_at"],
+      });
     }
     res.json(account);
   } catch (e) {

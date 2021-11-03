@@ -10,6 +10,17 @@ const router = Router();
 
 router.use(guard);
 
+// router.use((req, res, next) => {
+//   req["uid"] = "TJFsHJ3Z0YXv4rvlK25yCKWYDTa3";
+//   req["auth"] = {
+//     uid: req["uid"],
+//     phone_number: "+959786790788",
+//     email: null,
+//     created_at: 1634813766848,
+//   };
+//   next();
+// });
+
 // guarded routes
 router.use("/account", account);
 
