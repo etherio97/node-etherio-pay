@@ -8,28 +8,19 @@ import giftCards from "./gift-cards";
 
 const router = Router();
 
-router.use(guard);
+router.get("/", (req, res) => {
+  res.redirect("https://etherio-pay.web.app/#/");
+  res.end();
+});
 
-// router.use((req, res, next) => {
-//   req["uid"] = "TJFsHJ3Z0YXv4rvlK25yCKWYDTa3";
-//   req["auth"] = {
-//     uid: req["uid"],
-//     phone_number: "+959786790788",
-//     email: null,
-//     created_at: 1634813766848,
-//   };
-//   next();
-// });
+router.use("/account", guard, account);
 
-// guarded routes
-router.use("/account", account);
+router.use("/transfer", guard, transfer);
 
-router.use("/transfer", transfer);
+router.use("/transaction", guard, transaction);
 
-router.use("/transaction", transaction);
+router.use("/redeem", guard, redeem);
 
-router.use("/redeem", redeem);
-
-router.use("/gift-cards", giftCards);
+router.use("/gift-cards", guard, giftCards);
 
 export default router;
