@@ -1,0 +1,19 @@
+name: "Bug Report"
+description: "If something isn't working as expected"
+labels: ["needs triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## :warning: We use GitHub Issues to track bug reports, feature requests and regressions
+
+        **NOTE:** You don't need to answer questions that you know that aren't relevant.
+
+        ---
+
+   - type: checkboxes
+     attributes:
+       label: "Is there an existing issue for this?"
+       options:
+       - label: ""
+         required: true
