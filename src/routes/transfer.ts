@@ -81,22 +81,23 @@ router.post("/", async (req, res) => {
 
     res.json({ transactionId: transactionSnap.key });
 
-    await firestore()
-      .doc(["accounts", recipient.identifier].join("/"))
-      .set({})
-      .then(() =>
-        firestore()
-          .doc(["accounts", recipient.identifier].join("/"))
-          .set({ action: "balance" })
-      )
+    firestore()
+      .doc(["accounts", senderId].join("/"))
+      .set({ action: "balance", updated_at: Date.now() })
       .catch(() => null);
 
+    firestore()
+      .doc(["accounts", recipientId].join("/"))
+      .set({ action: "balance", updated_at: Date.now() })
+      .catch(() => null);
+
+    /*
     await queueToSendMessage(
       recipient.identifier,
       `You recieved ${amount.toLocaleString()} kyats from ${
         sender.identifier
       } at ${time}. -EtherioPay [Ref:${transactionSnap.key}]`
-    );
+    ); */
   } catch (e) {
     // console.error(e);
     res.status(500).json({ error: e.message });
