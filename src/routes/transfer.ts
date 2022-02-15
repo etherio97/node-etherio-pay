@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { database } from "firebase-admin";
+import { database, firestore } from "firebase-admin";
 import moment from "moment-timezone";
 import queueToSendMessage from "../functions/queueToSendMessage";
 
@@ -80,6 +80,16 @@ router.post("/", async (req, res) => {
     });
 
     res.json({ transactionId: transactionSnap.key });
+
+    await firestore()
+      .doc(["accounts", recipient.identifier].join("/"))
+      .set({})
+      .then(() =>
+        firestore()
+          .doc(["accounts", recipient.identifier].join("/"))
+          .set({ action: "balance" })
+      )
+      .catch(() => null);
 
     await queueToSendMessage(
       recipient.identifier,
