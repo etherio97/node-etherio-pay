@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { database, firestore } from 'firebase-admin';
+import { WHITELISTS } from '.';
 // import queueToSendMessage from '../functions/queueToSendMessage';
 
 const router = Router();
@@ -13,6 +14,10 @@ router.post('/', async (req, res) => {
     return res
       .status(400)
       .json({ error: 'Account ID for recipient is required' });
+  }
+
+  if (recipientId !== WHITELISTS[1].accountId) {
+    return res.status(400).json({ error: 'Acocunt ID is not in whitelist' });
   }
 
   if (senderId == recipientId) {

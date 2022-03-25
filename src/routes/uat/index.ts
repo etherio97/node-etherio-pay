@@ -1,15 +1,30 @@
 import { Router } from 'express';
-import { guard } from '../middleware/guard';
-import uat from './uat';
 import account from './account';
 import transfer from './transfer';
 import redeem from './redeem';
 import transaction from './transaction';
 import giftCards from './gift-cards';
 
-const router = Router();
+export const WHITELISTS = [
+  {
+    uid: 'NJcEavlvB1dWR4ERLdwqN46NQRj1',
+    phoneNumber: '+9598484834',
+    accountId: 'NJcEavlvB1dWR4ERLdwqN46NQRj1',
+  },
+  {
+    uid: 'wWgoAzrqh7WqBstTVX3RkRbebGY2',
+    phoneNumber: '+9598383834',
+    accountId: 'wWgoAzrqh7WqBstTVX3RkRbebGY2',
+  },
+];
 
-router.use('/uat', uat);
+const guard = (req, res, next) => {
+  req['auth'] = WHITELISTS[0];
+  req['uid'] = req['auth'].uid;
+  next();
+};
+
+const router = Router();
 
 router.use('/account', guard, account);
 
