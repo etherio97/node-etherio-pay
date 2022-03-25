@@ -1,0 +1,30 @@
+name: CI
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - src/**
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 14
+          cache: yarn
+      - name: Install Dependencies
+        run: yarn
+      - name: Build Production
+        run: yarn build:prod
+      - name: Git Config
+        run: |
+          git config --global user.name Ghost
+          git config --global user.email 50423290+etherio97@users.noreply.github.com
+      - name: Push Production
+        run: |
+          git checkout --orphan main
+          git add -f dist
+          git commit -am 'build for heroku'
+          git push -f origin main
